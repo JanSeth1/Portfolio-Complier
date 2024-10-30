@@ -9,9 +9,7 @@
 
     <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <!-- Add Firebase products that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
-    <!-- or -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
     <style>
         .popup {
@@ -56,14 +54,14 @@
             <div class="login-box">
                 <h2>Welcome Back!</h2>
                 <p>Don't have an account? <a href="#" id="create-account-link">Create a new account now</a>, it's FREE! Takes less than a minute.</p>
-                <form action="login.php" method="POST">
-                    <input type="text" name="username" placeholder="Username" required>
-                    <input type="password" id="password" name="password" placeholder="Password" required>
+                <form id="login-form">
+                    <input type="text" id="login-username" placeholder="Username" required>
+                    <input type="password" id="login-password" placeholder="Password" required>
                     <div class="show-password">
                         <input type="checkbox" id="show-password">
                         <label for="show-password">Show Password</label>
                     </div>
-                    <button type="submit" name="login">Login Now</button>
+                    <button type="submit">Login Now</button>
                 </form>
                 <a href="#" class="forgot-password">Forgot password? Click here</a>
             </div>
@@ -75,15 +73,15 @@
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2>Create Account</h2>
-            <form action="register.php" method="POST">
-                <input type="text" name="username" placeholder="Username" required>
-                <input type="password" id="new-password" name="password" placeholder="Password" required>
-                <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm Password" required>
+            <form id="register-form">
+                <input type="text" id="register-username" placeholder="Username" required>
+                <input type="password" id="new-password" placeholder="Password" required>
+                <input type="password" id="confirm-password" placeholder="Confirm Password" required>
                 <div class="show-password">
                     <input type="checkbox" id="show-password-modal">
                     <label for="show-password-modal">Show Password</label>
                 </div>
-                <select name="role" required>
+                <select id="role" required>
                     <option value="student">Student</option>
                     <option value="teacher">Teacher</option>
                 </select>
@@ -116,7 +114,7 @@
         });
 
         document.getElementById('show-password').addEventListener('change', function() {
-            const passwordField = document.getElementById('password');
+            const passwordField = document.getElementById('login-password');
             passwordField.type = this.checked ? 'text' : 'password';
         });
 
@@ -127,16 +125,6 @@
             newPasswordField.type = type;
             confirmPasswordField.type = type;
         });
-
-        // Check for success message
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('success')) {
-            popup.textContent = urlParams.get('success');
-            popup.style.display = 'block';
-            setTimeout(() => {
-                popup.style.display = 'none';
-            }, 3000);
-        }
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -151,9 +139,80 @@
         
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database(); // For Realtime Database
-        // or
-        const db = firebase.firestore(); // For Firestore
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Handle login
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Successful login
+                    const user = userCredential.user;
+                    popup.textContent = 'Login successful!';
+                    popup.style.display = 'block';
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                        window.location.href = 'dashboard.html'; // Redirect to dashboard
+                    }, 3000);
+                })
+                .catch((error) => {
+                    // Handle errors
+                    popup.textContent = error.message;
+                    popup.style.display = 'block';
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                    }, 3000);
+                });
+        });
+
+        // Handle registration
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('register-username').value;
+            const password = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const role = document.getElementById('role').value;
+
+            if (password !== confirmPassword) {
+                popup.textContent = 'Passwords do not match!';
+                popup.style.display = 'block';
+                setTimeout(() => {
+                    popup.style.display = 'none';
+                }, 3000);
+                return;
+            }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Successful registration
+                    const user = userCredential.user;
+                    // Save additional user info in Firestore
+                    return db.collection('users').doc(user.uid).set({
+                        email: email,
+                        role: role
+                    });
+                })
+                .then(() => {
+                    popup.textContent = 'Account created successfully!';
+                    popup.style.display = 'block';
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                        modal.style.display = 'none';
+                    }, 3000);
+                })
+                .catch((error) => {
+                    // Handle errors
+                    popup.textContent = error.message;
+                    popup.style.display = 'block';
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                    }, 3000);
+                });
+        });
     </script>
 </body>
 </html>
