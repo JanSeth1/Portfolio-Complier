@@ -1,0 +1,474 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #1b2a49;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar .brand h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #fff;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.sidebar ul li a i {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.sidebar ul li a:hover {
+    background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Main Content Styles */
+.main-content {
+    margin-left: 260px;
+    padding: 40px;
+    min-height: 100vh;
+    background-color: #f9fafb;
+}
+
+.main-content header {
+    background-color: #fff;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.main-content header h1 {
+    font-size: 28px;
+    color: #1b2a49;
+}
+
+/* Dashboard Overview Section */
+.dashboard-overview h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.card {
+    flex: 1;
+    background-color: white;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+    color: #4caf50;
+}
+
+.card p {
+    font-size: 18px;
+    color: #333;
+}
+
+/* Quick Actions Section */
+.quick-actions {
+    margin-top: 40px;
+}
+
+.quick-actions h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.quick-actions ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.quick-actions ul li {
+    margin-bottom: 10px;
+}
+
+/* Styling for the Upload New Work Button and View All Submissions Link */
+.quick-actions ul li button,
+.quick-actions ul li a {
+    display: inline-block;
+    background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.quick-actions ul li button:hover,
+.quick-actions ul li a:hover {
+    background: linear-gradient(135deg, #81c784 0%, #4caf50 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal Styles (General Modals) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 10% auto;
+    padding: 40px;
+    border: none;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #aaa;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #555;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #4caf50;
+    text-align: center;
+}
+
+.modal-content p {
+    font-size: 18px;
+    color: #555;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.modal-content button {
+    display: inline-block;
+    background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+    margin-top: 20px;
+}
+
+.modal-content button:hover {
+    background: linear-gradient(135deg, #81c784 0%, #4caf50 100%);
+}
+
+.modal-content label {
+    font-size: 18px;
+    margin-bottom: 10px;
+    display: block;
+    color: #333;
+}
+
+.modal-content select,
+.modal-content input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.modal-content input[type="submit"] {
+    background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.3s ease;
+}
+
+.modal-content input[type="submit"]:hover {
+    background: linear-gradient(135deg, #81c784 0%, #4caf50 100%);
+}
+
+/* Footer Section */
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #1b2a49;
+    color: white;
+    margin-top: 40px;
+    border-radius: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .main-content header h1 {
+        font-size: 24px;
+    }
+
+    .dashboard-overview h2 {
+        font-size: 20px;
+    }
+
+    .summary {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .card {
+        margin: 0;
+    }
+
+    .quick-actions h2 {
+        font-size: 18px;
+    }
+
+    .quick-actions ul li button,
+    .quick-actions ul li a {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+/* Settings Modal Specific Styles */
+#settingsModal .modal-content {
+    max-width: 700px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    border-radius: 8px;
+    margin: 10% auto;
+    position: relative;
+}
+
+#settingsModal h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+#settingsModal .form-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+#settingsModal .form-fields {
+    flex: 1;
+}
+
+#settingsModal .form-group {
+    margin-bottom: 20px;
+}
+
+#settingsModal label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+}
+
+#settingsModal .input-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+#settingsModal input[type="text"],
+#settingsModal input[type="password"],
+#settingsModal input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+#settingsModal input:focus {
+    border-color: #4caf50;
+}
+
+#settingsModal .change-link {
+    margin-left: 10px;
+    font-size: 12px;
+    color: #4caf50;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#settingsModal .profile-picture {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#settingsModal .profile-picture img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    margin-bottom: 10px;
+}
+
+#settingsModal .profile-picture button {
+    background-color: #1b2a49;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#settingsModal .profile-picture button:hover {
+    background-color: #333;
+}
+
+#settingsModal .actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+#settingsModal .actions button {
+    background-color: #1b2a49;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#settingsModal .actions button:hover {
+    background-color: #333;
+}
+
+#settingsModal .actions .cancel {
+    background-color: #ccc;
+    color: #333;
+}
+
+#settingsModal .actions .cancel:hover {
+    background-color: #bbb;
+}
+
+#settingsModal .delete-account {
+    color: #4caf50;
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+/* Responsive adjustments for settings modal */
+@media (max-width: 768px) {
+    #settingsModal .modal-content {
+        padding: 20px;
+    }
+
+    #settingsModal .form-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #settingsModal .actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #settingsModal .actions button {
+        width: 100%;
+    }
+}
