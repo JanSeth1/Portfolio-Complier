@@ -42,9 +42,9 @@ $username = $user['username'];
     <ul id="sidebarMenu">
         <li><a href="dashboard.php"><i class="fas fa-home"></i>Dashboard Home</a></li>
         <li><a href="javascript:void(0);" onclick="openUploadModal()"><i class="fas fa-upload"></i>Upload Work</a></li>
-        <li><a href="view_portfolio.php?category=quizzes"><i class="fas fa-book"></i>View Quizzes</a></li>
-        <li><a href="view_portfolio.php?category=homework"><i class="fas fa-pencil-alt"></i>View Homework</a></li>
-        <li><a href="view_portfolio.php?category=projects"><i class="fas fa-project-diagram"></i>View Projects</a></li>
+        <li><a href="javascript:void(0);" onclick="openModal('quizzes')"><i class="fas fa-book"></i>View Quizzes</a></li>
+        <li><a href="javascript:void(0);" onclick="openModal('homework')"><i class="fas fa-pencil-alt"></i>View Homework</a></li>
+        <li><a href="javascript:void(0);" onclick="openModal('projects')"><i class="fas fa-project-diagram"></i>View Projects</a></li>
         <li><a href="javascript:void(0);" onclick="openSettingsModal()"><i class="fas fa-cog"></i>Settings</a></li>
         <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
     </ul>
@@ -83,34 +83,49 @@ $username = $user['username'];
     </section>
 
     <!-- Upload Modal Section -->
-    <div id="uploadModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeUploadModal()">&times;</span>
-            <h2 style="text-align: center; color: #4caf50;">Upload New Work</h2>
-            <form action="upload.php" method="post" enctype="multipart/form-data">
-                <label for="category">Select Category:</label>
-                <select name="category" id="category" required>
-                    <option value="homework">Homework</option>
-                    <option value="quizzes">Quizzes</option>
-                    <option value="projects">Projects</option>
-                </select>
+<div id="uploadModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeUploadModal()">&times;</span>
+        <h2 style="text-align: center; color: #4caf50;">Upload New Work</h2>
+        <form action="upload.php" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="student_id" value="1"> <!-- Example student ID -->
+            <input type="hidden" name="class_id" value="1"> <!-- Example class ID -->
 
-                <label for="fileToUpload">Select file to upload:</label>
-                <input type="file" name="fileToUpload" id="fileToUpload" required>
+            <label for="category">Select Category:</label>
+            <select name="category_id" id="category" required>
+                <option value="1">Homework</option>
+                <option value="3">Quizzes</option>
+                <option value="4">Projects</option>
+            </select>
 
-                <input type="submit" value="Upload" name="upload">
-            </form>
+            <label for="title">Title:</label>
+            <input type="text" name="title" id="title" required>
+
+            <label for="description">Description:</label>
+            <textarea name="description" id="description"></textarea>
+
+            <label for="fileToUpload">Select file to upload:</label>
+            <input type="file" name="fileToUpload" id="fileToUpload" required>
+
+            <input type="submit" value="Upload" name="upload">
+        </form>
+    </div>
+</div>
+
+<!-- Button to open the modal -->
+<button id="openModalBtn">Open Upload Modal</button>
+
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle">Uploaded Files</h2>
+        <div id="modalBody" class="uploads-overview">
+            <!-- Table will be dynamically inserted here -->
         </div>
     </div>
-
-    <!-- Modal Section -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 id="modalTitle"></h2>
-            <div id="modalBody" class="uploads-overview">Detailed information about the selected category will appear here.</div>
-        </div>
-    </div>
+</div>
+</div>
+</div>
 
     <!-- Settings Modal -->
     <div id="settingsModal" class="modal">
@@ -156,6 +171,7 @@ $username = $user['username'];
     </footer>
 
 </div>
+
 <script src="script.js"></script>
 
 </body>

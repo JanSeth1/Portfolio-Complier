@@ -143,7 +143,7 @@ body {
     margin-bottom: 10px;
 }
 
-/* Styling for the Upload New Work Button and View All Submissions Link */
+
 .quick-actions ul li button,
 .quick-actions ul li a {
     display: inline-block;
@@ -167,7 +167,7 @@ body {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Modal Styles (General Modals) */
+
 .modal {
     display: none;
     position: fixed;
@@ -182,14 +182,12 @@ body {
 
 .modal-content {
     background-color: #ffffff;
-    margin: 10% auto;
-    padding: 40px;
-    border: none;
-    border-radius: 12px;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
     width: 90%;
-    max-width: 600px;
+    max-width: 800px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, opacity 0.3s ease;
     position: relative;
 }
 
@@ -206,11 +204,90 @@ body {
     color: #555;
 }
 
+#modalTitle {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.file-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.file-table th, .file-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.file-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.file-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.file-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.file-table a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.file-table a:hover {
+    text-decoration: underline;
+}
+
+.action-button {
+    background-color: #4caf50;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+    background-color: #45a049;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 20px;
+    }
+
+    .file-table th, .file-table td {
+        font-size: 14px;
+    }
+}
+
 .modal-content h2 {
     margin-bottom: 20px;
     font-size: 24px;
     color: #4caf50;
     text-align: center;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 10% auto;
+    padding: 40px;
+    border: none;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    position: relative;
 }
 
 .modal-content p {
@@ -313,6 +390,8 @@ footer {
         font-size: 14px;
     }
 }
+
+
 
 /* Settings Modal Specific Styles */
 #settingsModal .modal-content {
