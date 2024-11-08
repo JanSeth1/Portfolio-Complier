@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $role = $_POST['role'];
 
     if ($password !== $confirm_password) {
-        header("Location: index.php?error=Passwords do not match");
+        header("Location: index.php?error=" . urlencode("Passwords do not match"));
         exit;
     }
 
@@ -21,9 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param("sss", $username, $password, $role);
 
     if ($stmt->execute()) {
-        header("Location: index.php?success=Account created successfully");
+        header("Location: index.php?success=" . urlencode("Account created successfully"));
     } else {
-        header("Location: index.php?error=Registration failed");
+        header("Location: index.php?error=" . urlencode("Registration failed"));
     }
 
     $stmt->close();
