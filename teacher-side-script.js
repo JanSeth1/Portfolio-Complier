@@ -1,81 +1,53 @@
-// Open the modal for a specific category
-function openModal(category) {
-    const modal = document.getElementById('myModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBody = document.getElementById('modalBody');
+// Array to store currently enrolled students
+let currentStudents = [];
 
-    // Set the modal title based on the category
-    modalTitle.textContent = `View ${category.charAt(0).toUpperCase() + category.slice(1)}`;
-
-    // Fetch files for the selected category
-    fetch('http://localhost/PHP/fetch-files.php?category_id=' + getCategoryId(category))
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(files => {
-        modalBody.innerHTML = ''; // Clear previous content
-        if (files.length > 0) {
-            const table = document.createElement('table');
-            table.classList.add('file-table');
-
-            // Create table header
-            const header = document.createElement('tr');
-            header.innerHTML = `
-                <th>File Name</th>
-                <th>Uploaded On</th>
-                <th>Actions</th>
-            `;
-            table.appendChild(header);
-
-            // Create table rows
-            files.forEach(file => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><a href="${file.file_path}" target="_blank">${file.title}</a></td>
-                    <td>${new Date(file.submission_date).toLocaleString()}</td>
-                    <td><button class="action-button">Download</button></td>
-                `;
-                table.appendChild(row);
-            });
-
-            modalBody.appendChild(table);
-        } else {
-            modalBody.innerHTML = '<p>No files uploaded in this category.</p>';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching files:', error);
-        modalBody.innerHTML = `<p>Error loading files: ${error.message}. Please try again later.</p>`;
-    });
-    modal.style.display = 'block';
+// Open the Manage Classes Modal
+function openManageClassesModal() {
+    fetchClasses();
+    document.getElementById('manageClassesModal').style.display = 'block';
+    document.getElementById('manageClassesModal').style.zIndex = '1010'; // Higher than other modals
+    // Lower the z-index of other modals if they are open
+    document.getElementById('studentsModal').style.zIndex = '1005';
+    document.getElementById('addStudentModal').style.zIndex = '1005';
 }
 
-// Close the modal
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
+// Close the Manage Classes Modal
+function closeManageClassesModal() {
+    document.getElementById('manageClassesModal').style.display = 'none';
 }
 
-// Get category ID based on category name
-function getCategoryId(category) {
-    switch (category) {
-        case 'quizzes': return 2;
-        case 'homework': return 1;
-        case 'projects': return 3;
-        default: return 0;
-    }
-}
+// Fetch Classes for the Teacher
+function fetchClasses() {
+    fetch('fetch_teacher_classes.php')
+        .then(response => response.json())
+        .then(data => {
+            const classesList = document.getElementById('classesList');
+            classesList.innerHTML = ''; // Clear previous content
 
-// Open Settings Modal
-function openSettingsModal() {
-    document.getElementById("settingsModal").style.display = "block";
-}
-
-// Open Upload Modal
-function openUploadModal() {
-    document.getElementById("uploadModal").style.display = "block";
+            if (data.success) {
+                if (data.classes.length > 0) {
+                    data.classes.forEach(classItem => {
+                        const classDiv = document.createElement('div');
+                        classDiv.classList.add('class-item');
+                        classDiv.innerHTML = `
+                            <h3>${classItem.class_name}</h3>
+                            <button onclick="showStudentsSection(${classItem.class_id}, '${classItem.class_name}')">Manage Class</button>
+                            <button onclick="editClass(${classItem.class_id})">Edit</button>
+                            <button class="delete" onclick="deleteClass(${classItem.class_id})">Delete</button>
+                        `;
+                        classesList.appendChild(classDiv);
+                    });
+                } else {
+                    classesList.innerHTML = '<p>No classes found.</p>';
+                }
+            } else {
+                classesList.innerHTML = `<p>Error: ${data.error}</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching classes:', error);
+            classesList.innerHTML = '<p>Error loading classes. Please try again later.</p>';
+        });
 }
 
 // Open Create Class Modal
@@ -83,40 +55,130 @@ function openCreateClassModal() {
     document.getElementById('createClassModal').style.display = 'block';
 }
 
+// Close Create Class Modal
 function closeCreateClassModal() {
     document.getElementById('createClassModal').style.display = 'none';
 }
 
-document.getElementById('createClassForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the default form submission
+// Open Settings Modal
+function openSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'block';
+}
 
-    const formData = new FormData(this);
+// Close Settings Modal
+function closeSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'none';
+}
 
-    fetch('create_class.php', {
+
+// Show Students Section
+function showStudentsSection(classId, className) {
+    console.log('Received class ID:', classId);
+    document.getElementById('studentsModal').style.display = 'block';
+    document.getElementById('studentsModal').style.zIndex = '1020'; // Highest when shown
+    document.getElementById('manageClassesModal').style.zIndex = '1010';
+    document.getElementById('addStudentModal').style.zIndex = '1005';
+    console.log('Showing students for class:', className, 'with ID:', classId);
+
+    // Set the class ID in the hidden input field of the Add Student form
+    document.getElementById('addStudentClassId').value = classId;
+    document.getElementById('addStudentClassId').value = classId;  // Set the hidden input value
+    openAddStudentModal(classId);  // Open the modal with the class ID
+
+    const studentsList = document.getElementById('studentsList');
+    studentsList.innerHTML = '<tr><td colspan="3">Loading...</td></tr>'; // Show loading indicator
+
+    fetch(`fetch_students.php?class_id=${classId}`)
+        .then(response => response.json())
+        .then(data => {
+            studentsList.innerHTML = ''; // Clear loading indicator
+            if (data.success) {
+                currentStudents = data.students.map(student => student.username); // Update the student list
+                if (data.students.length > 0) {
+                    data.students.forEach(student => {
+                        const studentRow = document.createElement('tr');
+                        studentRow.innerHTML = `
+                            <td>${student.username}</td>
+                            <td>${student.email}</td>
+                            <td>
+                                <button onclick="editStudent(${student.user_id})">Edit</button>
+                                <button onclick="removeStudent(${student.user_id}, ${classId})">Remove</button>
+                            </td>
+                        `;
+                        studentsList.appendChild(studentRow);
+                    });
+                } else {
+                    studentsList.innerHTML = '<tr><td colspan="3">No students found in this class.</td></tr>';
+                }
+            } else {
+                alert('Error fetching students: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching students:', error);
+            studentsList.innerHTML = '<tr><td colspan="3">Failed to load students. Please try again later.</td></tr>';
+        });
+}
+
+function closeModal() {
+    document.getElementById('studentsModal').style.display = 'none';
+}
+
+// Open the Add Student Modal
+// Open the Add Student Modal with the class ID set
+function openAddStudentModal(classId) {
+    console.log('Opening Add Student Modal for class ID:', classId); 
+    console.log('Class ID at openAddStudentModal:', classId);// Should log a number, not undefined
+    document.getElementById('addStudentModal').style.display = 'block';
+    document.getElementById('addStudentModal').style.zIndex = '1030'; // Ensure it's on top of everything
+    document.getElementById('studentsModal').style.zIndex = '1020';
+    document.getElementById('manageClassesModal').style.zIndex = '1010';
+    document.getElementById('addStudentModal').style.display = 'block';
+    document.getElementById('addStudentClassId').value = classId;
+}
+// Close the Add Student Modal
+function closeAddStudentModal() {
+    document.getElementById('addStudentModal').style.display = 'none';
+}
+
+// Handle Add Student Form Submission
+document.getElementById('addStudentForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const studentUsernames = document.getElementById('studentUsername').value.trim().split(','); // Assuming usernames are comma-separated
+    const classId = document.getElementById('addStudentClassId').value;
+    console.log('Submitting students:', studentUsernames, 'for class ID:', classId); // Debugging output
+
+    fetch('add_students_to_class.php', {
         method: 'POST',
-        body: formData
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ class_id: classId, student_usernames: studentUsernames })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
-            // Handle success (e.g., close modal, update UI)
-            closeCreateClassModal();
-            alert('Class created successfully!');
-            // Optionally, refresh the list of classes or update the UI
+            alert('Students added successfully!');
+            closeModal(); // Close the Add Student modal
+            showStudentsSection(classId, ''); // Refresh the list of students
         } else {
-            // Display errors
-            document.getElementById('formFeedback').textContent = data.error || 'An error occurred.';
+            throw new Error(data.error || 'Failed to add students');
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('formFeedback').textContent = 'An error occurred. Please try again.';
+        console.error('Error adding students:', error);
+        alert('An error occurred. Please try again. ' + error.message);
     });
 });
 
 // Close the modal when clicking outside of it
 window.onclick = function(event) {
-    const modals = ['myModal', 'settingsModal', 'uploadModal', 'createClassModal'];
+    const modals = ['manageClassesModal', 'settingsModal', 'createClassModal', 'studentsModal', 'addStudentModal'];
     modals.forEach(modalId => {
         const modal = document.getElementById(modalId);
         if (event.target === modal) {
@@ -125,156 +187,69 @@ window.onclick = function(event) {
     });
 };
 
-function openManageClassesModal() {
-    fetchClasses();
-    document.getElementById('manageClassesModal').style.display = 'block';
+function editStudent(studentId) {
+    console.log('Editing student with ID:', studentId);
+    // Implement logic to edit student details
+    alert("Edit student functionality not implemented yet.");
 }
 
-function closeManageClassesModal() {
-    document.getElementById('manageClassesModal').style.display = 'none';
-}
-
-function fetchClasses() {
-    fetch('fetch_classes.php')
+function removeStudent(studentId, classId) {
+    if (confirm('Are you sure you want to remove this student from the class?')) {
+        fetch('remove_student.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ student_id: studentId, class_id: classId })
+        })
         .then(response => response.json())
         .then(data => {
-            const classesList = document.getElementById('classesList');
-            classesList.innerHTML = ''; // Clear previous content
-
             if (data.success) {
-                data.classes.forEach(classItem => {
-                    const classDiv = document.createElement('div');
-                    classDiv.classList.add('class-item');
-                    classDiv.innerHTML = `
-                        <h3>${classItem.class_name}</h3>
-                        <button onclick="showStudentsSection(${classItem.class_id}, '${classItem.class_name}')">Manage Students</button>
-                        <button onclick="editClass(${classItem.class_id})">Edit</button>
-                        <button class="delete" onclick="deleteClass(${classItem.class_id})">Delete</button>
-                    `;
-                    classesList.appendChild(classDiv);
-                });
+                alert('Student removed successfully.');
+                showStudentsSection(classId, ''); // Refresh the list of students
             } else {
-                classesList.innerHTML = `<p>Error: ${data.error}</p>`;
+                alert('Error removing student: ' + data.error);
             }
         })
         .catch(error => {
-            console.error('Error fetching classes:', error);
-            document.getElementById('classesList').innerHTML = '<p>Error loading classes. Please try again later.</p>';
+            console.error('Error removing student:', error);
+            alert('An error occurred while removing the student. Please try again.');
         });
-}
-
-function fetchClasses() {
-    fetch('fetch_classes.php')
-        .then(response => response.json())
-        .then(data => {
-            const classesList = document.getElementById('classesList');
-            classesList.innerHTML = ''; // Clear previous content
-
-            if (data.success) {
-                data.classes.forEach(classItem => {
-                    const classDiv = document.createElement('div');
-                    classDiv.classList.add('class-item');
-                    classDiv.innerHTML = `
-                        <h3>${classItem.class_name}</h3>
-                        <button onclick="showStudentsSection(${classItem.class_id}, '${classItem.class_name}')">Manage Students</button>
-                        <button onclick="editClass(${classItem.class_id})">Edit</button>
-                        <button class="delete" onclick="deleteClass(${classItem.class_id})">Delete</button>
-                    `;
-                    classesList.appendChild(classDiv);
-                });
-            } else {
-                classesList.innerHTML = `<p>Error: ${data.error}</p>`;
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching classes:', error);
-            document.getElementById('classesList').innerHTML = '<p>Error loading classes. Please try again later.</p>';
-        });
-}
-
-function showStudentsSection(classId, className) {
-    console.log('Showing students for class:', className, 'with ID:', classId); // Debugging: Log class info
-    document.getElementById('classTitle').textContent = className;
-    document.getElementById('addStudentClassId').value = classId;
-    fetchRegisteredStudents(classId);
-    document.getElementById('studentsSection').style.display = 'block';
-}
-
-function fetchRegisteredStudents(classId) {
-    console.log('Fetching students for class ID:', classId); // Debugging: Log fetch attempt
-    fetch(`fetch_registered_students.php?class_id=${classId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Received data:', data); // Debugging: Log received data
-            const studentsTableBody = document.getElementById('studentsTable').querySelector('tbody');
-            studentsTableBody.innerHTML = ''; // Clear previous content
-
-            if (data.success) {
-                if (data.students.length === 0) {
-                    studentsTableBody.innerHTML = '<tr><td colspan="3">No students enrolled.</td></tr>';
-                } else {
-                    data.students.forEach(student => {
-                        const studentRow = document.createElement('tr');
-                        studentRow.innerHTML = `
-                            <td><input type="checkbox" value="${student.user_id}"></td>
-                            <td>${student.username}</td>
-                            <td>${student.name}</td>
-                        `;
-                        studentsTableBody.appendChild(studentRow);
-                    });
-                }
-            } else {
-                studentsTableBody.innerHTML = `<tr><td colspan="3">Error: ${data.error}</td></tr>`;
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching registered students:', error);
-            document.getElementById('studentsTable').querySelector('tbody').innerHTML = '<tr><td colspan="3">Error loading students. Please try again later.</td></tr>';
-        });
-}
-
-function addSelectedStudents() {
-    const selectedStudentIds = Array.from(document.querySelectorAll('#studentsTable tbody input[type="checkbox"]:checked'))
-        .map(checkbox => checkbox.value);
-
-    if (selectedStudentIds.length === 0) {
-        alert('No students selected.');
-        return;
     }
-
-    const classId = document.getElementById('addStudentClassId').value;
-
-    fetch('add_students_to_class.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ class_id: classId, student_ids: selectedStudentIds })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Students added successfully.');
-            fetchRegisteredStudents(classId); // Refresh the student list for the class
-        } else {
-            alert('Error adding students: ' + data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error adding students:', error);
-        alert('An error occurred while adding students. Please try again.');
-    });
 }
 
-function closeManageClassesModal() {
-    document.getElementById('manageClassesModal').style.display = 'none';
+function editClass(classId) {
+    console.log('Editing class with ID:', classId);
+    // Implement logic to edit class
 }
 
-function closeAddStudentModal() {
-    document.getElementById('addStudentModal').style.display = 'none';
+function deleteClass(classId) {
+    if (confirm('Are you sure you want to delete this class?')) {
+        fetch('delete_class.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ class_id: classId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Class deleted successfully.');
+                fetchClasses(); // Refresh the list of classes
+            } else {
+                alert('Error deleting class: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting class:', error);
+            alert('An error occurred while deleting the class. Please try again.');
+        });
+    }
+}
+
+function deleteAccount() {
+    if (confirm('Are you sure you want to delete your account?')) {
+        alert("Account deletion functionality not implemented.");
+    }
 }

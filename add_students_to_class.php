@@ -1,47 +1,41 @@
 <?php
-// add_students_to_class.php
-
 header('Content-Type: application/json');
+include 'db.php'; // Ensure your DB connection settings are correct
+
 $data = json_decode(file_get_contents('php://input'), true);
-
 $class_id = $data['class_id'];
-$student_ids = $data['student_ids'];
+$student_usernames = $data['student_usernames']; // Assuming an array of usernames is sent
 
-// Include the database connection
-include 'db.php';
+$conn->begin_transaction();
 
-// Debugging: Output the class_id
-error_log("Class ID received: " . $class_id);
-
-// Check if the class_id exists
-$class_check_query = "SELECT class_id FROM Classes WHERE class_id = ?";
-$class_stmt = $conn->prepare($class_check_query);
-$class_stmt->bind_param("i", $class_id);
-$class_stmt->execute();
-$class_stmt->store_result();
-
-if ($class_stmt->num_rows === 0) {
-    echo json_encode(['success' => false, 'error' => "Class ID $class_id does not exist"]);
-    $class_stmt->close();
-    $conn->close();
-    exit;
-}
-
-$class_stmt->close();
-
-// Proceed to add students to the class
-foreach ($student_ids as $student_id) {
-    $stmt = $conn->prepare("INSERT INTO Students_Classes (student_id, class_id) VALUES (?, ?)");
-    $stmt->bind_param("ii", $student_id, $class_id);
-    if (!$stmt->execute()) {
-        echo json_encode(['success' => false, 'error' => 'Failed to add student: ' . $stmt->error]);
+try {
+    foreach ($student_usernames as $username) {
+        // Get student ID from username
+        $stmt = $conn->prepare("SELECT user_id FROM Users WHERE username = ? AND role = 'student'");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows == 0) {
+            throw new Exception("Student username not found: $username");
+        }
+        $student_id = $result->fetch_assoc()['user_id'];
         $stmt->close();
-        $conn->close();
-        exit;
+
+        // Insert student into class
+        $stmt = $conn->prepare("INSERT INTO Students_Classes (student_id, class_id) VALUES (?, ?)");
+        $stmt->bind_param("ii", $student_id, $class_id);
+        $stmt->execute();
+        if ($stmt->affected_rows == 0) {
+            throw new Exception("Failed to add student to class: $username");
+        }
+        $stmt->close();
     }
-    $stmt->close();
+    $conn->commit();
+    echo json_encode(['success' => true]);
+} catch (Exception $e) {
+    $conn->rollback();
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
 
-echo json_encode(['success' => true]);
-$conn->close(); // Close the connection
+$conn->close();
 ?>

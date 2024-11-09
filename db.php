@@ -1,8 +1,8 @@
 <?php
-$servername = "sql.freedb.tech";
-$username = "freedb_janseth";
-$password = "9tHVz52!#ASjW6f";
-$dbname = "freedb_portfoliocompiler";
+$servername = "localhost";
+$username = "root";
+$password = "root";
+$dbname = "portfoliodatabase";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

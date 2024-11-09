@@ -11,6 +11,19 @@ body {
     color: #333;
 }
 
+#manageClassesModal {
+    z-index: 1000; /* Ensure this is lower than the students modal */
+}
+
+#studentsModal {
+    z-index: 1100; /* Higher z-index to appear above the manage classes modal */
+}
+
+#addStudentModal {
+    z-index: 2;
+}
+
+
 /* Sidebar Styles */
 .sidebar {
     width: 250px;
@@ -178,16 +191,15 @@ footer {
 
 /* Modal Styles */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Base z-index for all modals */
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding-top: 60px;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
 .modal-content {
@@ -376,4 +388,196 @@ table th {
         width: 95%;
         margin: 10% auto;
     }
+}
+
+/* Settings Modal Specific Styles */
+#settingsModal .modal-content {
+    max-width: 700px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    border-radius: 8px;
+    margin: 10% auto;
+    position: relative;
+}
+
+#settingsModal h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+#settingsModal .form-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+#settingsModal .form-fields {
+    flex: 1;
+}
+
+#settingsModal .form-group {
+    margin-bottom: 20px;
+}
+
+#settingsModal label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+}
+
+#settingsModal .input-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+#settingsModal input[type="text"],
+#settingsModal input[type="password"],
+#settingsModal input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+#settingsModal input:focus {
+    border-color: #4caf50;
+}
+
+#settingsModal .change-link {
+    margin-left: 10px;
+    font-size: 12px;
+    color: #4caf50;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#settingsModal .profile-picture {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#settingsModal .profile-picture img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    margin-bottom: 10px;
+}
+
+#settingsModal .profile-picture button {
+    background-color: #1b2a49;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#settingsModal .profile-picture button:hover {
+    background-color: #333;
+}
+
+#settingsModal .actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+#settingsModal .actions button {
+    background-color: #1b2a49;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#settingsModal .actions button:hover {
+    background-color: #333;
+}
+
+#settingsModal .actions .cancel {
+    background-color: #ccc;
+    color: #333;
+}
+
+#settingsModal .actions .cancel:hover {
+    background-color: #bbb;
+}
+
+#settingsModal .delete-account {
+    color: #4caf50;
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+/* Responsive adjustments for settings modal */
+@media (max-width: 768px) {
+    #settingsModal .modal-content {
+        padding: 20px;
+    }
+
+    #settingsModal .form-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #settingsModal .actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #settingsModal .actions button {
+        width: 100%;
+    }
+}
+
+/* student table */
+#studentsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#studentsTable th, #studentsTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#studentsTable th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+#studentsTable button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s;
+}
+
+#studentsTable button:hover {
+    background-color: #45a049;
 }
