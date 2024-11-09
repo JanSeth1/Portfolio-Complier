@@ -1,8 +1,8 @@
 <?php
-$servername = "whpeu.h.filess.io";
-$username = "portfoliodatabase_sentmetthy";
-$password = "84b7545529089cca782230034da28d547976fff7";
-$dbname = "portfoliodatabase_sentmetthy";
+$servername = "sql.freedb.tech";
+$username = "freedb_janseth";
+$password = "9tHVz52!#ASjW6f";
+$dbname = "freedb_portfoliocompiler";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
