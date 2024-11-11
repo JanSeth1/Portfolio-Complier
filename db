@@ -1,0 +1,43 @@
+CREATE TABLE Users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('student', 'teacher', 'admin') NOT NULL
+);
+
+CREATE TABLE Classes (
+    class_id INT AUTO_INCREMENT PRIMARY KEY,
+    class_name VARCHAR(100) NOT NULL,
+    teacher_id INT,
+    FOREIGN KEY (teacher_id) REFERENCES Users(user_id)
+);
+
+CREATE TABLE Students_Classes (
+    student_class_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT,
+    class_id INT,
+    FOREIGN KEY (student_id) REFERENCES Users(user_id),
+    FOREIGN KEY (class_id) REFERENCES Classes(class_id)
+);
+
+CREATE TABLE Categories (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name ENUM('homework', 'project', 'quiz') NOT NULL
+);
+
+CREATE TABLE Student_Work (
+    work_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT,
+    class_id INT,
+    category_id INT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    file_path VARCHAR(255),
+    submission_date DATETIME,
+    FOREIGN KEY (student_id) REFERENCES Users(user_id),
+    FOREIGN KEY (class_id) REFERENCES Classes(class_id),
+    FOREIGN KEY (category_id) REFERENCES Categories(category_id)
+);
+
+ALTER TABLE Student_Work
+ADD COLUMN status ENUM('submitted', 'reviewed', 'approved', 'rejected') DEFAULT 'submitted';
