@@ -11,18 +11,22 @@ body {
     color: #333;
 }
 
+/* Modal Z-Index Styles */
 #manageClassesModal {
-    z-index: 1000; /* Ensure this is lower than the students modal */
+    z-index: 1000; /* Lower than students modal */
 }
 
 #studentsModal {
-    z-index: 1100; /* Higher z-index to appear above the manage classes modal */
+    z-index: 1100; /* Higher than manage classes modal */
 }
 
 #addStudentModal {
-    z-index: 2;
+    z-index: 1200; /* Higher for add student modal */
 }
 
+#createClassModal {
+    z-index: 1300; /* Highest for create class modal */
+}
 
 /* Sidebar Styles */
 .sidebar {
@@ -199,7 +203,7 @@ footer {
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
 .modal-content {
@@ -242,7 +246,54 @@ footer {
     padding-bottom: 10px;
 }
 
-.primary-button {
+/* Add Student Modal Styles */
+#addStudentModal {
+    z-index: 1200; /* Higher for add student modal */
+}
+
+#addStudentModal .modal-content {
+    max-width: 600px; /* Set a maximum width for the modal */
+    width: 90%; /* Full width on smaller screens */
+    padding: 30px; /* Increased padding for better spacing */
+    background-color: #ffffff; /* White background for the modal */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+    position: relative; /* Position relative for close button */
+    animation: fadeIn 0.3s ease-in-out; /* Fade-in animation */
+}
+
+#addStudentModal h2 {
+    font-size: 24px; /* Font size for the header */
+    color: #1b2a49; /* Dark color for the header */
+    margin-bottom: 20px; /* Space below the header */
+    text-align: center; /* Center the header text */
+}
+
+/* Add Student Form Styles */
+#addStudentForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between form elements */
+}
+
+#addStudentForm label {
+    font-size: 14px;
+    color: #333;
+}
+
+#addStudentForm input[type="text"] {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+#addStudentForm input[type="text"]:focus {
+    border-color: #4caf50;
+}
+
+#addStudentForm button {
     background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
@@ -256,71 +307,188 @@ footer {
     width: fit-content;
 }
 
-.primary-button:hover {
+#addStudentForm button:hover {
     background-color: #45a049;
 }
 
-table {
+/* Feedback Message Styles */
+#addStudentFeedback {
+    margin-top: 15px;
+    text-align: center;
+    color: #4caf50; /* Default color for feedback */
+}
+
+/* Create Class Modal Styles */
+#createClassModal .modal-content {
+    max-width: 600px; /* Set a maximum width for the modal */
+    width: 90%; /* Full width on smaller screens */
+    padding: 30px; /* Increased padding for better spacing */
+    background-color: #ffffff; /* White background for the modal */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+    position: relative; /* Position relative for close button */
+    animation: fadeIn 0.3s ease-in-out; /* Fade-in animation */
+}
+
+/* Create Class Modal Header */
+#createClassModal h2 {
+    font-size: 24px; /* Font size for the header */
+    color: #1b2a49; /* Dark color for the header */
+    margin-bottom: 20px; /* Space below the header */
+    text-align: center; /* Center the header text */
+}
+
+/* Create Class Form Styles */
+#createClassForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between form elements */
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 14px;
+    color: #333;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+    border-color: #4caf50;
+}
+
+.submit-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 20px auto;
+    width: fit-content;
+}
+
+.submit-button:hover {
+    background-color: #45a049;
+}
+
+/* Feedback Message Styles for Create Class */
+#formFeedback {
+    margin-top: 15px;
+    text-align: center;
+    color: red; /* Default color for feedback */
+}
+
+/* Student Table Styles */
+#studentsTable {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-table th, table td {
+#studentsTable th, #studentsTable td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
 }
 
-table th {
+#studentsTable th {
     background-color: #f2f2f2;
     color: #333;
 }
 
-.class-item {
-    background-color: #f9f9f9;
-    margin: 10px 0;
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.class-item h3 {
-    margin: 0;
-    font-size: 18px;
-    color: #1b2a49;
-}
-
-.class-item button {
+#studentsTable button {
     background-color: #4CAF50;
-    border: none;
     color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
+    padding: 5px 10px;
+    border: none;
     border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
     transition: background-color 0.3s;
 }
 
-.class-item button:hover {
+#studentsTable button:hover {
     background-color: #45a049;
 }
 
+/* Manage Classes Modal Styles */
+#manageClassesModal .modal-content {
+    max-width: 700px; /* Set a maximum width for the modal */
+    width: 90%; /* Full width on smaller screens */
+    padding: 30px; /* Increased padding for better spacing */
+    background-color: #ffffff; /* White background for the modal */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+    position: relative; /* Position relative for close button */
+    animation: fadeIn 0.3s ease-in-out; /* Fade-in animation */
+}
+
+/* Class Item Styles */
+.class-item {
+    background-color: #f9f9f9; /* Light background for class items */
+    margin: 10px 0; /* Space between class items */
+    padding: 15px; /* Padding inside class items */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    display: flex; /* Flexbox for layout */
+    justify-content: space-between; /* Space between items */
+    align-items: center; /* Center items vertically */
+}
+
+/* Class Item Title */
+.class-item h3 {
+    margin: 0; /* Remove default margin */
+    font-size: 18px; /* Font size for class name */
+    color: #1b2a49; /* Dark color for class name */
+}
+
+/* Class Item Button Styles */
+.class-item button {
+    background-color: #4CAF50; /* Green background for buttons */
+    border: none; /* Remove border */
+    color: white; /* White text color */
+    padding: 10px 15px; /* Padding for buttons */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block; /* Inline block for buttons */
+    font-size: 14px; /* Font size for buttons */
+    margin: 4px 2px; /* Margin around buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+/* Button Hover Effects */
+.class-item button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+/* Delete Button Specific Styles */
 .class-item button.delete {
-    background-color: #f44336;
+    background-color: #f44336; /* Red background for delete button */
 }
 
 .class-item button.delete:hover {
-    background-color: #e53935;
+    background-color: #e53935; /* Darker red on hover */
 }
 
+/* Students List Styles */
 #studentsList {
     list-style-type: none;
     padding: 0;
@@ -348,6 +516,48 @@ table th {
 
 #studentsList button:hover {
     background-color: #e53935;
+}
+
+/* Available Students Table Styles */
+#availableStudentsTable {
+    width: 100%; /* Full width of the modal */
+    border-collapse: collapse; /* Collapse borders for a cleaner look */
+    margin-top: 20px; /* Space above the table */
+}
+
+#availableStudentsTable th, #availableStudentsTable td {
+    border: 1px solid #ddd; /* Border for table cells */
+    padding: 10px; /* Padding for table cells */
+    text-align: left; /* Left align text */
+}
+
+#availableStudentsTable th {
+    background-color: #f2f2f2; /* Light background for header */
+    color: #333; /* Dark text color for header */
+    font-weight: bold; /* Bold text for header */
+}
+
+#availableStudentsTable tr:nth-child(even) {
+    background-color: #f9f9f9; /* Zebra striping for rows */
+}
+
+#availableStudentsTable tr:hover {
+    background-color: #f1f1f1; /* Highlight row on hover */
+}
+
+/* Action Button Styles in Table */
+#availableStudentsTable button {
+    background-color: #4CAF50; /* Green background for action buttons */
+    color: white; /* White text */
+    padding: 5px 10px; /* Padding for buttons */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+#availableStudentsTable button:hover {
+    background-color: #45a049; /* Darker green on hover */
 }
 
 /* Responsive Design */
@@ -484,7 +694,7 @@ table th {
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
 }
 
 #settingsModal .profile-picture button:hover {
@@ -505,7 +715,7 @@ table th {
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
 }
 
 #settingsModal .actions button:hover {
@@ -549,35 +759,61 @@ table th {
     }
 }
 
-/* student table */
-#studentsTable {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+/* Review Submissions Modal Styles */
+#reviewSubmissionsModal .modal-content {
+    max-width: 700px; /* Set a maximum width for the modal */
+    width: 90%; /* Full width on smaller screens */
+    padding: 30px; /* Increased padding for better spacing */
+    background-color: #ffffff; /* White background for the modal */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+    position: relative; /* Position relative for close button */
+    animation: fadeIn 0.3s ease-in-out; /* Fade-in animation */
 }
 
-#studentsTable th, #studentsTable td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+#reviewSubmissionsModal h2 {
+    font-size: 24px; /* Font size for the header */
+    color: #1b2a49; /* Dark color for the header */
+    margin-bottom: 20px; /* Space below the header */
+    text-align: center; /* Center the header text */
 }
 
-#studentsTable th {
-    background-color: #f2f2f2;
-    color: #333;
+#submissionsTable {
+    width: 100%; /* Full width of the table */
+    border-collapse: collapse; /* Collapse borders for a cleaner look */
+    margin-top: 20px; /* Space above the table */
 }
 
-#studentsTable button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-right: 5px;
-    transition: background-color 0.3s;
+#submissionsTable th, #submissionsTable td {
+    border: 1px solid #ddd; /* Border for table cells */
+    padding: 10px; /* Padding for table cells */
+    text-align: left; /* Left align text */
 }
 
-#studentsTable button:hover {
-    background-color: #45a049;
+#submissionsTable th {
+    background-color: #f2f2f2; /* Light background for header */
+    color: #333; /* Dark text color for header */
+    font-weight: bold; /* Bold text for header */
+}
+
+#submissionsTable tr:nth-child(even) {
+    background-color: #f9f9f9; /* Zebra striping for rows */
+}
+
+#submissionsTable tr:hover {
+    background-color: #f1f1f1; /* Highlight row on hover */
+}
+
+#submissionsTable button {
+    background-color: #4CAF50; /* Green background for action buttons */
+    color: white; /* White text */
+    padding: 5px 10px; /* Padding for buttons */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+#submissionsTable button:hover {
+    background-color: #45a049; /* Darker green on hover */
 }

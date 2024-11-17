@@ -18,24 +18,32 @@ if (!$class_id) {
     exit;
 }
 
-// Delete the class from the database
-$query = "DELETE FROM Classes WHERE class_id = ? AND teacher_id = ?";
-$stmt = $conn->prepare($query);
-if (!$stmt) {
-    echo json_encode(['success' => false, 'error' => 'Prepare failed: ' . $conn->error]);
-    exit;
+try {
+    // Log the class_id and teacher_id for debugging
+    $teacher_id = $_SESSION['user_id'];
+    error_log("Attempting to delete class with ID: $class_id by teacher ID: $teacher_id");
+
+    // Delete the class from the database
+    $query = "DELETE FROM Classes WHERE class_id = ? AND teacher_id = ?";
+    $stmt = $conn->prepare($query);
+    if (!$stmt) {
+        throw new Exception('Database error: ' . $conn->error);
+    }
+
+    $stmt->bind_param("ii", $class_id, $teacher_id);
+    $stmt->execute();
+
+    if ($stmt->affected_rows > 0) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Class not found or you do not have permission to delete it']);
+    }
+
+    $stmt->close();
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'error' => 'An error occurred. Please try again later.']);
+    error_log("Error deleting class: " . $e->getMessage());
 }
 
-$teacher_id = $_SESSION['user_id'];
-$stmt->bind_param("ii", $class_id, $teacher_id);
-$stmt->execute();
-
-if ($stmt->affected_rows > 0) {
-    echo json_encode(['success' => true]);
-} else {
-    echo json_encode(['success' => false, 'error' => 'Class not found or you do not have permission to delete it']);
-}
-
-$stmt->close();
 $conn->close();
 ?>

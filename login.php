@@ -15,15 +15,16 @@ if (isset($_POST['login'])) {
     if (!$stmt) {
         die("Prepare failed: " . $conn->error);
     }
+    
     $stmt->bind_param("s", $entered_username);
     $stmt->execute();
     $stmt->bind_result($user_id, $stored_password, $role);
     $stmt->fetch();
 
-    // Verify the password
+    // Verify the password directly
     if ($entered_password === $stored_password) {
         $_SESSION['loggedin'] = true;
-        $_SESSION['user_id'] = $user_id;
+        $_SESSION['user_id'] = $user_id; // Ensure this is set
         $_SESSION['username'] = $entered_username;
         $_SESSION['role'] = $role; // Store the role in the session
 
@@ -45,3 +46,4 @@ if (isset($_POST['login'])) {
         exit;
     }
 }
+?>
