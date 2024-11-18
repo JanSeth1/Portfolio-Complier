@@ -1,7 +1,78 @@
-// Array to store currently enrolled students
+// Global array to store currently enrolled students
 let currentStudents = [];
 
-// Open the Add Student Modal
+// Document ready function to initialize event listeners and initial data fetch
+document.addEventListener('DOMContentLoaded', function() {
+    populateClassFilter();
+    initializeEventListeners();
+});
+
+// Initialize all event listeners
+function initializeEventListeners() {
+    document.getElementById('reviewSubmissionsButton').addEventListener('click', fetchSubmissions);
+    document.getElementById('addStudentForm').addEventListener('submit', handleAddStudentFormSubmission);
+    window.onclick = handleModalOutsideClick;
+}
+
+// Function to handle modal outside click
+function handleModalOutsideClick(event) {
+    const modals = ['manageClassesModal', 'settingsModal', 'createClassModal', 'studentsModal', 'addStudentModal', 'reviewSubmissionsModal'];
+    modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+
+// Function to handle the Add Student form submission
+function handleAddStudentFormSubmission(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const classId = document.getElementById('addStudentClassId').value;
+    const studentUsernames = document.getElementById('studentUsername').value.trim().split(',').map(username => username.trim());
+
+    if (studentUsernames.length === 0 || studentUsernames.some(username => username === '')) {
+        alert('Please enter at least one valid username.');
+        return;
+    }
+
+    addStudentsToClass(classId, studentUsernames);
+}
+
+// Function to add students to a class
+function addStudentsToClass(classId, studentUsernames) {
+    console.log('Submitting students:', studentUsernames, 'for class ID:', classId);
+
+    fetch('add_students_to_class.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ class_id: classId, student_usernames: studentUsernames })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            alert('Students added successfully!');
+            closeAddStudentModal();
+            showStudentsSection(classId, ''); // Refresh the list of students
+        } else {
+            throw new Error(data.error || 'Failed to add students');
+        }
+    })
+    .catch(error => {
+        console.error('Error adding students:', error);
+        alert('An error occurred while adding students: ' + error.message);
+    });
+}
+
+// Function to open the Add Student Modal
 function openAddStudentModal(classId) {
     console.log('Opening Add Student Modal for class ID:', classId);
     document.getElementById('addStudentModal').style.display = 'block';
@@ -15,43 +86,12 @@ function openAddStudentModal(classId) {
     fetchAvailableStudents(classId);
 }
 
-// Close the Add Student Modal
+// Function to close the Add Student Modal
 function closeAddStudentModal() {
     document.getElementById('addStudentModal').style.display = 'none';
 }
 
-// Function to add a student to the class
-function addStudentToClass(studentId, classId) {
-    console.log('Adding student with ID:', studentId, 'to class ID:', classId);
-    
-    // Show a loading indicator or disable the button
-    const availableStudentsList = document.getElementById('availableStudentsList');
-    availableStudentsList.innerHTML += '<tr><td colspan="3">Adding student...</td></tr>'; // Show adding indicator
-
-    fetch('add_students_to_class.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ student_id: studentId, class_id: classId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Student added successfully!');
-            fetchAvailableStudents(classId); // Refresh the available students list
-            showStudentsSection(classId, ''); // Optionally refresh the enrolled students list
-        } else {
-            alert('Error adding student: ' + data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error adding student:', error);
-        alert('Failed to add student. Please try again later.');
-    });
-}
-
-// Open the Manage Classes Modal
+// Function to open the Manage Classes Modal
 function openManageClassesModal() {
     fetchClasses();
     document.getElementById('manageClassesModal').style.display = 'block';
@@ -60,7 +100,12 @@ function openManageClassesModal() {
     document.getElementById('addStudentModal').style.zIndex = '1005'; // Ensure other modals are lower
 }
 
-// Fetch available students who are not registered in the class
+// Function to close the Manage Classes Modal
+function closeManageClassesModal() {
+    document.getElementById('manageClassesModal').style.display = 'none';
+}
+
+// Function to fetch available students who are not registered in the class
 function fetchAvailableStudents(classId) {
     const availableStudentsList = document.getElementById('availableStudentsList');
     availableStudentsList.innerHTML = '<tr><td colspan="3">Loading...</td></tr>'; // Show loading indicator
@@ -95,12 +140,7 @@ function fetchAvailableStudents(classId) {
         });
 }
 
-// Close the Manage Classes Modal
-function closeManageClassesModal() {
-    document.getElementById('manageClassesModal').style.display = 'none';
-}
-
-// Fetch Classes for the Teacher
+// Function to fetch classes for the teacher
 function fetchClasses() {
     fetch('fetch_teacher_classes.php')
         .then(response => response.json())
@@ -135,27 +175,27 @@ function fetchClasses() {
         });
 }
 
-// Open Create Class Modal
+// Function to open the Create Class Modal
 function openCreateClassModal() {
     document.getElementById('createClassModal').style.display = 'block';
 }
 
-// Close Create Class Modal
+// Function to close the Create Class Modal
 function closeCreateClassModal() {
     document.getElementById('createClassModal').style.display = 'none';
 }
 
-// Open Settings Modal
+// Function to open the Settings Modal
 function openSettingsModal() {
     document.getElementById('settingsModal').style.display = 'block';
 }
 
-// Close Settings Modal
+// Function to close the Settings Modal
 function closeSettingsModal() {
     document.getElementById('settingsModal').style.display = 'none';
 }
 
-// Show Students Section
+// Function to show the Students Section
 function showStudentsSection(classId, className) {
     console.log('Received class ID:', classId);
     document.getElementById('studentsModal').style.display = 'block';
@@ -202,75 +242,19 @@ function showStudentsSection(classId, className) {
         });
 }
 
+// Function to close the modal
 function closeModal() {
     document.getElementById('studentsModal').style.display = 'none';
 }
 
-// Handle Add Student Form Submission
-document.getElementById('addStudentForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the default form submission
-
-    // Get the class ID from the hidden input field
-    const classId = document.getElementById('addStudentClassId').value;
-
-    // Get the student usernames from the input field
-    const studentUsernames = document.getElementById('studentUsername').value.trim().split(',').map(username => username.trim()); // Trim whitespace
-
-    // Validate input
-    if (studentUsernames.length === 0 || studentUsernames.some(username => username === '')) {
-        alert('Please enter at least one valid username.');
-        return;
-    }
-
-    console.log('Submitting students:', studentUsernames, 'for class ID:', classId); // Debugging output
-
-    // Fetch request to add students to the class
-    fetch('add_students_to_class.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ class_id: classId, student_usernames: studentUsernames })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Response from server:', data); // Log the response
-        if (data.success) {
-            alert('Students added successfully!');
-            closeAddStudentModal(); // Close the Add Student modal
-            showStudentsSection(classId, ''); // Refresh the list of students
-        } else {
-            throw new Error(data.error || 'Failed to add students');
-        }
-    })
-    .catch(error => {
-        console.error('Error adding students:', error);
-        alert('An error occurred while adding students: ' + error.message);
-    });
-});
-
-// Close the modal when clicking outside of it
-window.onclick = function(event) {
-    const modals = ['manageClassesModal', 'settingsModal', 'createClassModal', 'studentsModal', 'addStudentModal'];
-    modals.forEach(modalId => {
-        const modal = document.getElementById(modalId);
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-};
-
+// Function to edit a student
 function editStudent(studentId) {
     console.log('Editing student with ID:', studentId);
     // Implement logic to edit student details
     alert("Edit student functionality not implemented yet.");
 }
 
+// Function to remove a student from a class
 function removeStudent(studentId, classId) {
     if (confirm('Are you sure you want to remove this student from the class?')) {
         fetch('remove_student.php', {
@@ -296,11 +280,13 @@ function removeStudent(studentId, classId) {
     }
 }
 
+// Function to edit a class
 function editClass(classId) {
     console.log('Editing class with ID:', classId);
     // Implement logic to edit class
 }
 
+// Function to delete a class
 function deleteClass(classId) {
     if (confirm('Are you sure you want to delete this class?')) {
         fetch('delete_class.php', {
@@ -326,10 +312,37 @@ function deleteClass(classId) {
     }
 }
 
+// Function to delete an account
 function deleteAccount() {
     if (confirm('Are you sure you want to delete your account?')) {
         alert("Account deletion functionality not implemented.");
     }
+}
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    populateClassFilter();
+    initializeEventListeners();
+});
+
+function initializeEventListeners() {
+    document.getElementById('reviewSubmissionsButton').addEventListener('click', openReviewSubmissionsModal);
+    document.getElementById('addStudentForm').addEventListener('submit', handleAddStudentFormSubmission);
+    window.onclick = function(event) {
+        handleModalOutsideClick(event);
+    };
+}
+
+function handleModalOutsideClick(event) {
+    const modals = ['manageClassesModal', 'settingsModal', 'createClassModal', 'studentsModal', 'addStudentModal', 'reviewSubmissionsModal', 'detailedReviewModal'];
+    modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 }
 
 async function fetchSubmissions() {
@@ -347,39 +360,36 @@ async function fetchSubmissions() {
         submissionsList.innerHTML = ''; // Clear previous content
 
         if (data.success) {
-            if (data.submissions.length > 0) {
-                data.submissions.forEach(submission => {
-                    const submissionRow = document.createElement('tr');
-                    submissionRow.innerHTML = `
-                        <td>${submission.username}</td>
-                        <td>${submission.title}</td>
-                        <td>${submission.description}</td>
-                        <td>${new Date(submission.submission_date).toLocaleString()}</td>
-                        <td>
-                            <button onclick="reviewSubmission(${submission.work_id})">Review</button>
-                        </td>
-                    `;
-                    submissionsList.appendChild(submissionRow);
-                });
-            } else {
-                submissionsList.innerHTML = '<tr><td colspan="5">No submissions found.</td></tr>';
-            }
+            data.submissions.forEach(submission => {
+                const submissionRow = document.createElement('tr');
+                submissionRow.innerHTML = `
+                    <td>${submission.username}</td>
+                    <td>${submission.title}</td>
+                    <td>${submission.description}</td>
+                    <td>${new Date(submission.submission_date).toLocaleString()}</td>
+                    <td>${submission.status || 'Pending'}</td> <!-- Display the status, default to 'Pending' if not available -->
+                    <td>
+                        <button onclick="openDetailedReviewModal(${submission.work_id})">Review</button>
+                    </td>
+                `;
+                submissionsList.appendChild(submissionRow);
+            });
         } else {
-            submissionsList.innerHTML = `<tr><td colspan="5">Error: ${data.error}</td></tr>`;
+            submissionsList.innerHTML = `<tr><td colspan="6">Error: ${data.error}</td></tr>`;
         }
     } catch (error) {
         console.error('Error fetching submissions:', error);
-        submissionsList.innerHTML = '<tr><td colspan="5">Failed to load submissions. Please try again later.</td></tr>';
+        submissionsList.innerHTML = '<tr><td colspan="6">Failed to load submissions. Please try again later.</td></tr>';
     }
 }
 
-// Function to populate the class filter dropdown
 async function populateClassFilter() {
     try {
-        const response = await fetch('fetch_classes.php'); // Endpoint to get classes for the teacher
+        const response = await fetch('fetch_teacher_classes.php');
         const data = await response.json();
+
         const classFilter = document.getElementById('classFilter');
-        classFilter.innerHTML = ''; // Clear previous options
+        classFilter.innerHTML = '';
 
         if (data.success) {
             data.classes.forEach(cls => {
@@ -389,42 +399,12 @@ async function populateClassFilter() {
                 classFilter.appendChild(option);
             });
         } else {
-            console.error('Error fetching classes:', data.error);
+            const option = document.createElement('option');
+            option.textContent = "No classes available";
+            classFilter.appendChild(option);
         }
     } catch (error) {
         console.error('Error fetching classes:', error);
-    }
-}
-
-// Call this function on page load to populate the class filter
-populateClassFilter();
-
-// Call this function when the Review Submissions button is clicked
-document.getElementById('reviewSubmissionsButton').addEventListener('click', fetchSubmissions);
-
-function reviewSubmission(submissionId) {
-    const feedback = prompt("Enter your feedback for this submission:");
-    if (feedback) {
-        fetch('review_submission.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ submission_id: submissionId, feedback: feedback })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Feedback submitted successfully!');
-                fetchSubmissions(); // Refresh the submissions list
-            } else {
-                alert('Error submitting feedback: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error submitting feedback:', error);
-            alert('Failed to submit feedback. Please try again later.');
-        });
     }
 }
 
@@ -435,4 +415,58 @@ function openReviewSubmissionsModal() {
 
 function closeReviewSubmissionsModal() {
     document.getElementById('reviewSubmissionsModal').style.display = 'none';
+}
+
+function openDetailedReviewModal(workId) {
+    document.getElementById('detailedReviewModal').style.display = 'block';
+    fetchSubmissionDetails(workId);
+}
+
+async function fetchSubmissionDetails(workId) {
+    try {
+        const response = await fetch(`fetch_submission_details.php?work_id=${workId}`);
+        const data = await response.json();
+        if (data.success) {
+            document.getElementById('submissionDetails').innerHTML = `
+                <p><strong>Title:</strong> ${data.submission.title}</p>
+                <p><strong>Description:</strong> ${data.submission.description}</p>
+                <p><strong>Submitted At:</strong> ${new Date(data.submission.submission_date).toLocaleString()}</p>
+                <a href="${data.submission.file_path}" target="_blank">View File</a>
+                <button onclick="updateStatus(${workId}, 'approved')">Approve</button>
+                <button onclick="updateStatus(${workId}, 'rejected')">Reject</button>
+            `;
+        } else {
+            document.getElementById('submissionDetails').innerHTML = 'Failed to load submission details.';
+        }
+    } catch (error) {
+        console.error('Error fetching submission details:', error);
+        document.getElementById('submissionDetails').innerHTML = 'Failed to load submission details.';
+    }
+}
+
+async function updateStatus(workId, status) {
+    try {
+        const response = await fetch('update_submission_status.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ work_id: workId, status: status })
+        });
+        const data = await response.json();
+        if (data.success) {
+            alert('Status updated successfully!');
+            closeDetailedReviewModal();
+            fetchSubmissions(); // Refresh the list of submissions
+        } else {
+            alert('Failed to update status.');
+        }
+    } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update status.');
+    }
+}
+
+function closeDetailedReviewModal() {
+    document.getElementById('detailedReviewModal').style.display = 'none';
 }
