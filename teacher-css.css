@@ -817,3 +817,77 @@ footer {
 #submissionsTable button:hover {
     background-color: #45a049; /* Darker green on hover */
 }
+
+/* Detailed Review Modal Styles */
+#detailedReviewModal .modal-content {
+    max-width: 600px; /* Set a maximum width for the modal */
+    width: 90%; /* Full width on smaller screens */
+    padding: 30px; /* Increased padding for better spacing */
+    background-color: #ffffff; /* White background for the modal */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+    position: relative; /* Position relative for close button */
+    animation: fadeIn 0.3s ease-in-out; /* Fade-in animation */
+}
+
+#detailedReviewModal h2 {
+    font-size: 26px; /* Slightly larger font size for the header */
+    color: #1b2a49; /* Dark color for the header */
+    margin-bottom: 20px; /* Space below the header */
+    text-align: center; /* Center the header text */
+}
+
+#submissionDetails {
+    margin-bottom: 20px; /* Space below the details section */
+    font-size: 16px; /* Standard font size for details */
+    color: #555; /* Darker gray for better readability */
+}
+
+#submissionDetails p {
+    margin: 10px 0; /* Space between paragraphs */
+}
+
+#submissionDetails a {
+    color: #4CAF50; /* Green color for links */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Bold for emphasis */
+}
+
+#submissionDetails a:hover {
+    text-decoration: underline; /* Underline on hover for better UX */
+}
+
+button {
+    background-color: #4CAF50; /* Green background for buttons */
+    color: white; /* White text */
+    padding: 10px 15px; /* Padding for buttons */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+    margin: 5px; /* Space between buttons */
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+button:active {
+    transform: translateY(0); /* Reset lift effect on click */
+}
+
+/* Close Button Styles */
+.close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #aaa;
+    font-size: 28px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #555; /* Darker color on hover */
+}

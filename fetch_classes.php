@@ -31,6 +31,8 @@ while ($row = $result->fetch_assoc()) {
     $classes[] = $row;
 }
 
+
+
 $stmt->close();
 $conn->close();
 

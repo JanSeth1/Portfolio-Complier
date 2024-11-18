@@ -158,15 +158,22 @@ $username = $user['username'];
             <!-- Options will be dynamically populated -->
         </select>
 
+        <!-- Tabs for filtering submissions -->
+        <div class="tabs">
+            <button class="tablinks" onclick="filterSubmissions('Pending')">Pending</button>
+            <button class="tablinks" onclick="filterSubmissions('Approved')">Approved</button>
+        </div>
+
         <table id="submissionsTable">
             <thead>
-                <tr>
-                    <th>Student</th>
-                    <th>Submission Title</th>
-                    <th>Description</th>
-                    <th>Submitted At</th>
-                    <th>Action</th>
-                </tr>
+            <tr>
+                <th>Username</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Submission Date</th>
+                <th>Status</th> <!-- Header for status -->
+                <th>Actions</th>
+            </tr>
             </thead>
             <tbody id="submissionsList">
                 <!-- Submission rows will be dynamically inserted here -->
@@ -174,6 +181,20 @@ $username = $user['username'];
         </table>
     </div>
 </div>
+
+
+<!-- Detailed Review Modal -->
+<div id="detailedReviewModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeDetailedReviewModal()">&times;</span>
+        <h2>Submission Details</h2>
+        <div id="submissionDetails">
+            <!-- Details will be loaded here -->
+        </div>
+        
+    </div>
+</div>
+
 <!-- Create Class Modal -->
 <div id="createClassModal" class="modal" style="display: none;">
     <div class="modal-content">
@@ -241,6 +262,9 @@ $username = $user['username'];
     <p>&copy; 2024 Teacher Portal</p>
 </footer>
 
-<script src="teacher-side-script.js"></script>
+<script 
+    src="teacher-side-script.js">
+    document.getElementById('classFilter').addEventListener('change', fetchSubmissions);
+</script>
 </body>
 </html>
