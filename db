@@ -8,6 +8,7 @@ CREATE TABLE Users (
 CREATE TABLE Classes (
     class_id INT AUTO_INCREMENT PRIMARY KEY,
     class_name VARCHAR(100) NOT NULL,
+    class_code VARCHAR(255),
     teacher_id INT,
     FOREIGN KEY (teacher_id) REFERENCES Users(user_id)
 );
@@ -25,19 +26,25 @@ CREATE TABLE Categories (
     category_name ENUM('homework', 'project', 'quiz') NOT NULL
 );
 
-CREATE TABLE Student_Work (
-    work_id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id INT,
+CREATE TABLE Assignments (
+    assignment_id INT AUTO_INCREMENT PRIMARY KEY,
     class_id INT,
     category_id INT,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    file_path VARCHAR(255),
-    submission_date DATETIME,
-    FOREIGN KEY (student_id) REFERENCES Users(user_id),
+    deadline DATETIME NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (class_id) REFERENCES Classes(class_id),
     FOREIGN KEY (category_id) REFERENCES Categories(category_id)
 );
 
-ALTER TABLE Student_Work
-ADD COLUMN status ENUM('submitted', 'reviewed', 'approved', 'rejected') DEFAULT 'submitted';
+CREATE TABLE Student_Work (
+    work_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT,
+    assignment_id INT,
+    submission_date DATETIME,
+    file_path VARCHAR(255),
+    status ENUM('submitted', 'reviewed', 'approved', 'rejected') DEFAULT 'submitted',
+    FOREIGN KEY (student_id) REFERENCES Users(user_id),
+    FOREIGN KEY (assignment_id) REFERENCES Assignments(assignment_id)
+);
